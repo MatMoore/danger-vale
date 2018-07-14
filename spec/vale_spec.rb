@@ -6,39 +6,182 @@ module Danger
       expect(Danger::DangerVale.new(nil)).to be_a Danger::Plugin
     end
 
-    #
-    # You should test your custom attributes and methods here
-    #
     describe "with Dangerfile" do
       before do
         @dangerfile = testing_dangerfile
-        @my_plugin = @dangerfile.vale
+        @vale = @dangerfile.vale
 
         # mock the PR data
         # you can then use this, eg. github.pr_author, later in the spec
         json = File.read(File.dirname(__FILE__) + '/support/fixtures/github_pr.json') # example json: `curl https://api.github.com/repos/danger/danger-plugin-template/pulls/18 > github_pr.json`
-        allow(@my_plugin.github).to receive(:pr_json).and_return(json)
+        allow(@vale.github).to receive(:pr_json).and_return(json)
       end
 
-      # Some examples for writing tests
-      # You should replace these with your own.
+      it "runs vale with JSON output and supresses nonzero exit codes" do
+        open3 = class_double("Open3").as_stubbed_const
 
-      it "Warns on a monday" do
-        monday_date = Date.parse("2016-07-11")
-        allow(Date).to receive(:today).and_return monday_date
+        expect(open3).to receive(:capture3).with(
+          "vale",
+          "--output", "JSON",
+          "--no-exit",
+          "foo.md"
+        ).and_return([
+          "{}",
+          "",
+          instance_double("Process::Status", :success? => true)
+        ])
 
-        @my_plugin.warn_on_mondays
-
-        expect(@dangerfile.status_report[:warnings]).to eq(["Trying to merge code on a Monday"])
+        @vale.lint_files ["foo.md"]
       end
 
-      it "Does nothing on a tuesday" do
-        monday_date = Date.parse("2016-07-12")
-        allow(Date).to receive(:today).and_return monday_date
+      it "throws an exception if the vale command doesn't exist" do
+        open3 = class_double("Open3").as_stubbed_const
 
-        @my_plugin.warn_on_mondays
+        allow(open3).to receive(:capture3).with(
+          "vale",
+          "--output", "JSON",
+          "--no-exit",
+          "foo.md"
+        ).and_raise(Errno::ENOENT.new("vale"))
 
-        expect(@dangerfile.status_report[:warnings]).to eq([])
+        expect { @vale.lint_files ["foo.md"] }.to raise_error(Errno::ENOENT)
+      end
+
+      context "given a line with a single warning and a single error" do
+        let(:result) do
+          {
+            "foo.md" => [
+              {
+                "Check" => "vale.Editorializing",
+                "Description" => "",
+                "Line" => 1,
+                "Link" => "",
+                "Message" => "Consider removing 'very'",
+                "Severity" => "warning",
+                "Span" => [
+                  11,
+                  14
+                ],
+                "Hide" => false,
+                "Match" => ""
+              },
+              {
+                "Check": "vale.Repetition",
+                "Description" => "",
+                "Line" => 1,
+                "Link" => "",
+                "Message" => "'very' is repeated!",
+                "Severity" => "error",
+                "Span" => [
+                  11,
+                  19
+                ],
+                "Hide" => false,
+                "Match" => ""
+              }
+            ]
+          }
+        end
+
+        it "comments on the warning and the error" do
+          allow(@vale).to receive(:run_valelint).and_return result
+
+          @vale.lint_files ["foo.md"]
+
+          expect(@dangerfile.status_report[:warnings]).to eq(["Consider removing 'very'"])
+          expect(@dangerfile.status_report[:errors]).to eq(["'very' is repeated!"])
+        end
+      end
+
+      context "given a line with two warnings" do
+        let(:result) do
+          {
+            "foo.md" => [
+              {
+                "Check" => "vale.Editorializing",
+                "Description" => "",
+                "Line" => 5,
+                "Link" => "",
+                "Message" => "Consider removing 'very'",
+                "Severity" => "warning",
+                "Span" => [
+                  11,
+                  14
+                ],
+                "Hide" => false,
+                "Match" => ""
+              },
+              {
+                "Check": "vale.Repetition",
+                "Description" => "",
+                "Line" => 5,
+                "Link" => "",
+                "Message" => "'very' is repeated!",
+                "Severity" => "warning",
+                "Span" => [
+                  11,
+                  19
+                ],
+                "Hide" => false,
+                "Match" => ""
+              }
+            ]
+          }
+        end
+
+        it "comments with a list of the two warnings" do
+          allow(@vale).to receive(:run_valelint).and_return result
+
+          @vale.lint_files ["foo.md"]
+
+          expect(@dangerfile.status_report[:warnings]).to eq(["- Consider removing 'very'\n- 'very' is repeated!"])
+        end
+      end
+
+      context "given a warning that occurs on two lines" do
+        let(:result) do
+          {
+            "foo.md" => [
+              {
+                "Check" => "vale.Editorializing",
+                "Description" => "",
+                "Line" => 5,
+                "Link" => "",
+                "Message" => "Consider removing 'very'",
+                "Severity" => "warning",
+                "Span" => [
+                  11,
+                  14
+                ],
+                "Hide" => false,
+                "Match" => ""
+              },
+              {
+                "Check" => "vale.Editorializing",
+                "Description" => "",
+                "Line" => 6,
+                "Link" => "",
+                "Message" => "Consider removing 'very'",
+                "Severity" => "warning",
+                "Span" => [
+                  11,
+                  14
+                ],
+                "Hide" => false,
+                "Match" => ""
+              },
+
+            ]
+          }
+        end
+
+        it "comments on both of them" do
+          allow(@vale).to receive(:run_valelint).and_return result
+
+          @vale.lint_files ["foo.md"]
+
+          expect(@dangerfile.status_report[:warnings]).to eq(["Consider removing 'very'", "Consider removing 'very'"])
+        end
       end
 
     end

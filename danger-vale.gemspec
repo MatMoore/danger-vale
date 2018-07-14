@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Vale::VERSION
   spec.authors       = ['Mat Moore']
   spec.email         = ['matmoore@users.noreply.github.com']
-  spec.description   = %q{A short description of danger-vale.}
-  spec.summary       = %q{A longer description of danger-vale.}
+  spec.description   = %q{A vale plugin for Danger}
+  spec.summary       = %q{This danger plugin runs Vale lint against prose commited to git repositories.}
   spec.homepage      = 'https://github.com/Mat Moore/danger-vale'
   spec.license       = 'MIT'
 
