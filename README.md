@@ -25,4 +25,4 @@ Danger will add inline comments to the lines that generate vale warnings or erro
 
 ## License
 
-See [LICENSE.txt](LICENCE.txt)
+See [LICENSE.txt](LICENSE.txt)
