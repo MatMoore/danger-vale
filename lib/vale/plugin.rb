@@ -33,17 +33,17 @@ module Danger
       results = run_valelint(files)
 
       results.each do |filename, checks|
-        by_line = checks.group_by { |check| [check["Line"], check["Severity"]] }
+        by_line = checks.group_by { |check| check["Line"] }
 
-        by_line.each do |(line, severity), line_checks|
-          message = parse_message(line_checks)
-
-          if severity == "error"
-            fail(message, file: filename, line: line)
-          elsif line_checks.count > 1
-            markdown(message, file: filename, line: line)
-          else
-            warn(message, file: filename, line: line)
+        by_line.each do |line, line_checks|
+          line_checks.each do |line_check|
+            message = line_check["Message"]
+            severity = line_check["Severity"]
+            if severity == "error"
+              fail(message, file: filename, line: line)
+            else
+              warn(message, file: filename, line: line)
+            end
           end
         end
       end
@@ -63,14 +63,6 @@ module Danger
         return JSON.parse(out)
       else
         raise "Unable to parse vale output"
-      end
-    end
-
-    def parse_message(checks)
-      if checks.length == 1
-        checks.first["Message"]
-      else
-        checks.map { |check| "- " + check["Message"] }.uniq.join("\n")
       end
     end
   end

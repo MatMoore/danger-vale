@@ -148,12 +148,12 @@ module Danger
           }
         end
 
-        it "comments with a list of the two warnings" do
+        it "comments on both of them" do
           allow(@vale).to receive(:run_valelint).and_return result
 
           @vale.lint_files ["foo.md"]
 
-          expect(@dangerfile.status_report[:markdowns].map(&:message)).to eq(["- Consider removing 'very'\n- 'very' is repeated!"])
+          expect(@dangerfile.status_report[:warnings]).to eq(["Consider removing 'very'", "'very' is repeated!"])
         end
       end
 
