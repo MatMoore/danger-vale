@@ -13,7 +13,7 @@ module Danger
         @dangerfile = testing_dangerfile
         @vale = @dangerfile.vale
 
-        allow(@dangerfile.git).to receive(:modified_files).and_return(["foo.md", "bar.md"])
+        allow(@dangerfile.git).to receive(:modified_files).and_return(["foo.md", "bar.md", "foo.png"])
         allow(@dangerfile.git).to receive(:added_files).and_return(["baz.md"])
       end
 

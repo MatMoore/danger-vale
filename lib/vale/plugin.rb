@@ -29,6 +29,7 @@ module Danger
     # @return   [void]
     def lint_files(files = nil)
       files ||= (git.modified_files + git.added_files)
+      files.select! { |line| line.end_with? ".markdown", ".md", ".erb.md" }
 
       results = run_valelint(files)
 
