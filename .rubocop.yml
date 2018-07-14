@@ -22,7 +22,7 @@ Lint/UselessAssignment:
   Exclude:
     - '**/spec/**/*'
 
-Lint/ModuleLength:
+Metrics/ModuleLength:
   Exclude:
     - '**/spec/**/*'
 
@@ -131,7 +131,7 @@ Metrics/BlockLength:
 Style/MixinGrouping:
   Enabled: false
 
-Style/FileName:
+Naming/FileName:
   Enabled: false
 
 Layout/IndentHeredoc:
