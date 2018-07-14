@@ -2,33 +2,32 @@ require 'open3'
 require 'json'
 
 module Danger
-  # This is your plugin class. Any attributes or methods you expose here will
-  # be available from within your Dangerfile.
+  # A plugin for danger which checks prose commited to git repositories.
   #
-  # To be published on the Danger plugins site, you will need to have
-  # the public interface documented. Danger uses [YARD](http://yardoc.org/)
-  # for generating documentation from your plugin source, and you can verify
-  # by running `danger plugins lint` or `bundle exec rake spec`.
+  # You need to install the vale command to use this plugin.
+  # https://github.com/errata-ai/vale
   #
-  # You should replace these comments with a public description of your library.
+  # @example Lint all added and modified files
   #
-  # @example Ensure people are well warned about merging on Mondays
+  #          vale.lint_files
   #
-  #          my_plugin.warn_on_mondays
+  # @example Lint specific files
   #
-  # @see  Mat Moore/danger-vale
-  # @tags monday, weekends, time, rattata
+  #          vale.lint_files ["README.md"]
+  #
+  # @see https://github.com/MatMoore/danger-vale Github repository for this plugin
+  # @see https://github.com/dbgrandi/danger-prose A similar plugin which use proselint instead of vale
+  # @tags prose, copy, text, blogging, blog, writing, jekyll, middleman, hugo, metalsmith, gatsby, express
   #
   class DangerVale < Plugin
-    # An attribute that you can read/write from your Dangerfile
-    #
-    # @return   [Array<String>]
-    attr_accessor :my_attribute
+    # Lints a list of files
+    # @param   [String] files
+    #          An array of filenames to lint (optional).
+    #          If not specified, the plugin will use all modified and added files.
+    # @return   [void]
+    def lint_files(files = nil)
+      files ||= (git.modified_files + git.added_files)
 
-    # A method that you can call from your Dangerfile
-    # @return   [Array<String>]
-    #
-    def lint_files(files)
       results = run_valelint(files)
 
       results.each do |filename, checks|

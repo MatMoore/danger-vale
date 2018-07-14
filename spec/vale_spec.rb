@@ -11,10 +11,8 @@ module Danger
         @dangerfile = testing_dangerfile
         @vale = @dangerfile.vale
 
-        # mock the PR data
-        # you can then use this, eg. github.pr_author, later in the spec
-        json = File.read(File.dirname(__FILE__) + '/support/fixtures/github_pr.json') # example json: `curl https://api.github.com/repos/danger/danger-plugin-template/pulls/18 > github_pr.json`
-        allow(@vale.github).to receive(:pr_json).and_return(json)
+        allow(@dangerfile.git).to receive(:modified_files).and_return(["foo.md", "bar.md"])
+        allow(@dangerfile.git).to receive(:added_files).and_return(["baz.md"])
       end
 
       it "runs vale with JSON output and supresses nonzero exit codes" do
@@ -32,6 +30,25 @@ module Danger
         ])
 
         @vale.lint_files ["foo.md"]
+      end
+
+      it "defaults to linting added and modified files" do
+        open3 = class_double("Open3").as_stubbed_const
+
+        expect(open3).to receive(:capture3).with(
+          "vale",
+          "--output", "JSON",
+          "--no-exit",
+          "foo.md",
+          "bar.md",
+          "baz.md"
+        ).and_return([
+          "{}",
+          "",
+          instance_double("Process::Status", :success? => true)
+        ])
+
+        @vale.lint_files
       end
 
       it "throws an exception if the vale command doesn't exist" do
