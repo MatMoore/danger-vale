@@ -1,20 +1,28 @@
 # danger-vale
 
-A description of danger-vale.
+A plugin for [danger](https://danger.systems/ruby/) which checks prose commited to git repositories.
 
-## Installation
+## Dependencies
+You need to [install the vale command](https://github.com/errata-ai/vale) to use this plugin.
 
-    $ gem install danger-vale
 
 ## Usage
+Follow the instructions to [set up Danger for your project](https://danger.systems/guides/getting_started.html).
 
-    Methods and attributes from this plugin are available in
-    your `Dangerfile` under the `vale` namespace.
+Then call `vale.lint_files` in your `Dangerfile`:
 
-## Development
+<blockquote>Lint all added and modified files
+  <pre>
+vale.lint_files</pre>
+</blockquote>
 
-1. Clone this repo
-2. Run `bundle install` to setup dependencies.
-3. Run `bundle exec rake spec` to run the tests.
-4. Use `bundle exec guard` to automatically have tests run as you make changes.
-5. Make your changes.
+<blockquote>Lint specific files
+  <pre>
+vale.lint_files ["README.md"]</pre>
+</blockquote>
+
+Danger will add inline comments to the lines that generate vale warnings or errors.
+
+## License
+
+See [LICENSE.txt](LICENCE.txt)
