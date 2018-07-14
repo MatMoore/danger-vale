@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["matmoore@users.noreply.github.com"]
   spec.description   = "A vale plugin for Danger"
   spec.summary       = "This danger plugin runs Vale lint against prose commited to git repositories."
-  spec.homepage      = "https://github.com/Mat Moore/danger-vale"
+  spec.homepage      = "https://github.com/MatMoore/danger-vale"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)

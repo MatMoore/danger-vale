@@ -1,4 +1,5 @@
 # danger-vale
+[![Build Status](https://travis-ci.org/MatMoore/danger-vale.svg?branch=master)](https://travis-ci.org/MatMoore/danger-vale)
 
 A plugin for [danger](https://danger.systems/ruby/) which checks prose commited to git repositories.
 
