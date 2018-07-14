@@ -1,5 +1,7 @@
-require 'open3'
-require 'json'
+# frozen_string_literal: true
+
+require "open3"
+require "json"
 
 module Danger
   # A plugin for danger which checks prose commited to git repositories.
@@ -33,8 +35,8 @@ module Danger
       results.each do |filename, checks|
         by_line = checks.group_by { |check| [check["Line"], check["Severity"]] }
 
-        by_line.each do |(line, severity), checks|
-          message = parse_message(checks)
+        by_line.each do |(line, severity), line_checks|
+          message = parse_message(line_checks)
 
           if severity == "error"
             fail(message, file: filename, line: line)
@@ -45,13 +47,13 @@ module Danger
       end
     end
 
-  private
+    private
 
     def run_valelint(files)
-      out, err, status = Open3.capture3(
-        'vale',
-        '--output', 'JSON',
-        '--no-exit',
+      out, _err, status = Open3.capture3(
+        "vale",
+        "--output", "JSON",
+        "--no-exit",
         *files
       )
 
@@ -66,7 +68,7 @@ module Danger
       if checks.length == 1
         checks.first["Message"]
       else
-        checks.map { |check| "- " + check["Message"]}.uniq.join("\n")
+        checks.map { |check| "- " + check["Message"] }.uniq.join("\n")
       end
     end
   end

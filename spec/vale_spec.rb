@@ -1,4 +1,6 @@
-require File.expand_path("../spec_helper", __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path("spec_helper", __dir__)
 
 module Danger
   describe Danger::DangerVale do
@@ -24,10 +26,10 @@ module Danger
           "--no-exit",
           "foo.md"
         ).and_return([
-          "{}",
-          "",
-          instance_double("Process::Status", :success? => true)
-        ])
+                       "{}",
+                       "",
+                       instance_double("Process::Status", success?: true)
+                     ])
 
         @vale.lint_files ["foo.md"]
       end
@@ -43,10 +45,10 @@ module Danger
           "bar.md",
           "baz.md"
         ).and_return([
-          "{}",
-          "",
-          instance_double("Process::Status", :success? => true)
-        ])
+                       "{}",
+                       "",
+                       instance_double("Process::Status", success?: true)
+                     ])
 
         @vale.lint_files
       end
@@ -186,7 +188,7 @@ module Danger
                 ],
                 "Hide" => false,
                 "Match" => ""
-              },
+              }
 
             ]
           }
@@ -200,7 +202,6 @@ module Danger
           expect(@dangerfile.status_report[:warnings]).to eq(["Consider removing 'very'", "Consider removing 'very'"])
         end
       end
-
     end
   end
 end
