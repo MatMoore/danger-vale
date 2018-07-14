@@ -5,6 +5,7 @@ A plugin for [danger](https://danger.systems/ruby/) which checks prose commited 
 ## Dependencies
 You need to [install the vale command](https://github.com/errata-ai/vale) to use this plugin.
 
+## Installation
 
 ## Usage
 Follow the instructions to [set up Danger for your project](https://danger.systems/guides/getting_started.html).
