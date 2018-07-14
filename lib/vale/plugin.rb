@@ -9,11 +9,11 @@ module Danger
   # You need to install the vale command to use this plugin.
   # https://github.com/errata-ai/vale
   #
-  # @example Lint all added and modified files
+  # @example Lint all added and modified markdown files
   #
   #          vale.lint_files
   #
-  # @example Lint specific files
+  # @example Lint specific files (non-markdown files will be ignored)
   #
   #          vale.lint_files ["README.md"]
   #
@@ -30,6 +30,8 @@ module Danger
     def lint_files(files = nil)
       files ||= (git.modified_files + git.added_files)
       files.select! { |line| line.end_with? ".markdown", ".md", ".erb.md" }
+
+      return if files.empty?
 
       results = run_valelint(files)
 

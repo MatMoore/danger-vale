@@ -53,6 +53,14 @@ module Danger
         @vale.lint_files
       end
 
+      it "does nothing if there are no lintable files" do
+        open3 = class_double("Open3").as_stubbed_const
+
+        expect(open3).not_to receive(:capture3)
+
+        @vale.lint_files([])
+      end
+
       it "throws an exception if the vale command doesn't exist" do
         open3 = class_double("Open3").as_stubbed_const
 

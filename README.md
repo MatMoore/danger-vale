@@ -13,12 +13,12 @@ Follow the instructions to [set up Danger for your project](https://danger.syste
 
 Then call `vale.lint_files` in your `Dangerfile`:
 
-<blockquote>Lint all added and modified files
+<blockquote>Lint all added and modified markdown files
   <pre>
 vale.lint_files</pre>
 </blockquote>
 
-<blockquote>Lint specific files
+<blockquote>Lint specific files (non-markdown files will be ignored)
   <pre>
 vale.lint_files ["README.md"]</pre>
 </blockquote>
