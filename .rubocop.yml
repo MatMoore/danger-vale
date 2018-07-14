@@ -22,6 +22,10 @@ Lint/UselessAssignment:
   Exclude:
     - '**/spec/**/*'
 
+Lint/ModuleLength:
+  Exclude:
+    - '**/spec/**/*'
+
 # We could potentially enable the 2 below:
 Layout/IndentHash:
   Enabled: false
