@@ -40,6 +40,8 @@ module Danger
 
           if severity == "error"
             fail(message, file: filename, line: line)
+          elsif line_checks.count > 1
+            markdown(message, file: filename, line: line)
           else
             warn(message, file: filename, line: line)
           end
